@@ -2,8 +2,9 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 import { Home } from "./Container/Home";
 import { Profile } from "./Container/Profile";
+import dotenv from "dotenv";
 
-// contract 0xAa499672AbBb77dCEFB21493CB95092F4FE40F9B
+dotenv.config();
 
 function App(): JSX.Element {
   return (

@@ -19,10 +19,13 @@ interface State {
 
 interface Component<P = {}, S = {}> extends ComponentLifecycle<P, S> {}
 
+const sizeArray: any[] = [];
+
 export class GetFiles extends React.Component<{}, State> {
   constructor(props: any) {
     super(props);
 
+    this.createFiles = this.createFiles.bind(this);
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
 
     this.state = {
@@ -44,7 +47,7 @@ export class GetFiles extends React.Component<{}, State> {
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const contract = new ethers.Contract(
-        "0x49C9FD7847e626a7BDbc5443cb4e0B3bF7390070",
+        `${process.env.CREATEFILEKEY}`,
         SendFile.abi,
         provider
       );
@@ -69,7 +72,6 @@ export class GetFiles extends React.Component<{}, State> {
 
         //this.setState({ totalStorage: dataArray });
         console.log(this.state.UserFiles);
-        const sizeArray: any[] = [];
 
         this.state.UserFiles.forEach((element) => {
           console.log(element.fileSize);
@@ -98,7 +100,6 @@ export class GetFiles extends React.Component<{}, State> {
 
   async createFiles(e: any) {
     e.preventDefault();
-
     console.log(
       this.state._FileName,
       this.state._FileLink,
@@ -109,16 +110,57 @@ export class GetFiles extends React.Component<{}, State> {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        "0x49C9FD7847e626a7BDbc5443cb4e0B3bF7390070",
+        `${process.env.CREATEFILEKEY}`,
         SendFile.abi,
         signer
       );
       console.log(contract);
 
+      const data = await contract.getFiles();
+      const dataArray: any[] = [];
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        console.log(element.userAddress);
+
+        if (
+          element.userAddress.toLowerCase() === window.ethereum.selectedAddress
+        ) {
+          console.log("File Added");
+          dataArray.push(element);
+        }
+      }
+
+      this.setState({ UserFiles: dataArray });
+
+      //this.setState({ totalStorage: dataArray });
+      console.log(this.state.UserFiles);
+
+      this.state.UserFiles.forEach((element) => {
+        console.log(element.fileSize);
+        const sizeNumber = Number(element.fileSize);
+        sizeArray.push(sizeNumber);
+      });
+
+      console.log(sizeArray);
+
+      const calc = (a: any) => {
+        var total = 0;
+        for (var i in a) {
+          total += a[i];
+        }
+        return total;
+      };
+
+      const totalFileSize = calc(sizeArray);
+      console.log(totalFileSize);
+
+      if (totalFileSize >= 2) {
+        console.log("over storage");
+      } else {
+        console.log("normall pass");
+      }
       try {
-        const token: string | any =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDlCOTMzOTU5NjMxMTkwMjdBODFkZUUwOTlhODQxNEIxMDA3YzkxZTkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDM4NzY2NTY0NTgsIm5hbWUiOiJhcGkifQ.Wt_lXKV_LBhiwJqLrc-9iqKNMrtilPB8dVnrgS9ZPd4" ||
-          process.env.WEB3STORAGE;
+        const token: string | any = process.env.WEB3STORAGE || "";
         const client = new Web3Storage({ token });
 
         const files = [new File([this.state.myFile], this.state.myFile.name)];
@@ -139,7 +181,7 @@ export class GetFiles extends React.Component<{}, State> {
           this.setState({ _FileName: file.name });
 
           this.setState({
-            _FileLink: `https://${cid}.ipfs.dweb.link/${file.name}`,
+            _FileLink: process.env.FILELINK || "",
           });
 
           this.setState({ _FileSize: `${fileSize}` });

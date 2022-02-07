@@ -47,7 +47,7 @@ export class SendFiles extends React.Component<{}, State> {
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const contract = new ethers.Contract(
-        "0x49C9FD7847e626a7BDbc5443cb4e0B3bF7390070",
+        `${process.env.CREATEFILEKEY}`,
         SendFile.abi,
         provider
       );
@@ -110,7 +110,7 @@ export class SendFiles extends React.Component<{}, State> {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        "0x49C9FD7847e626a7BDbc5443cb4e0B3bF7390070",
+        `${process.env.CREATEFILEKEY}`,
         SendFile.abi,
         signer
       );
@@ -160,9 +160,7 @@ export class SendFiles extends React.Component<{}, State> {
         console.log("normall pass");
       }
       try {
-        const token: string | any =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDlCOTMzOTU5NjMxMTkwMjdBODFkZUUwOTlhODQxNEIxMDA3YzkxZTkiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDM4NzY2NTY0NTgsIm5hbWUiOiJhcGkifQ.Wt_lXKV_LBhiwJqLrc-9iqKNMrtilPB8dVnrgS9ZPd4" ||
-          process.env.WEB3STORAGE;
+        const token: string | any = process.env.WEB3STORAGE || "";
         const client = new Web3Storage({ token });
 
         const files = [new File([this.state.myFile], this.state.myFile.name)];
@@ -183,7 +181,7 @@ export class SendFiles extends React.Component<{}, State> {
           this.setState({ _FileName: file.name });
 
           this.setState({
-            _FileLink: `https://${cid}.ipfs.dweb.link/${file.name}`,
+            _FileLink: process.env.FILELINK || "",
           });
 
           this.setState({ _FileSize: `${fileSize}` });
