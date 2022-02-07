@@ -4,7 +4,6 @@ import { ethers } from "ethers";
 import { Web3Storage, File } from "web3.storage";
 // import { Link } from "react-router-dom";
 
-// contract 0xAa499672AbBb77dCEFB21493CB95092F4FE40F9B
 declare let window: any;
 
 interface State {
