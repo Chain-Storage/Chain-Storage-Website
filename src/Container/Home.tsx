@@ -6,12 +6,6 @@ import { Link } from "react-router-dom";
 declare let window: any;
 
 export class Home extends Component {
-  async componentDidMount() {
-    if (typeof window.ethereum.selectedAddress !== "undefined") {
-      window.location.href = "/profile";
-    }
-  }
-
   // request access to the user's MetaMask account
   async requestAccount() {
     console.log(window.ethereum.selectedAddress);
@@ -26,7 +20,7 @@ export class Home extends Component {
           <button onClick={this.requestAccount}>Login</button>
         </header>
 
-        <Link to="/profile/">Go Proile</Link>
+        <Link to="/profile/">Go Profile</Link>
       </div>
     );
   }
